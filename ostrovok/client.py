@@ -11,9 +11,10 @@ API_PATH = '/api/b2b/v2'
 
 
 class OstrovokClient:
-    def __init__(self, auth,
-                 verify_ssl=True):
-        """Ostrovok API Client.
+    def __init__(self, auth, verify_ssl=True):
+        """Client for Ostrovok.ru Partners API v.2.
+
+        API Documentation: https://partner.ostrovok.ru/wiki
 
         :param auth: Ostrovok user (key_id) and password (key) for basic auth.
         :type auth: (str, str)
