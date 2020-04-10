@@ -1,0 +1,11 @@
+{
+    "debug": {
+        "status": 500
+    },
+    "error": {
+        "description": "Unexpected error",
+        "extra": null,
+        "slug": "unexpected_error"
+    },
+    "result": null
+}

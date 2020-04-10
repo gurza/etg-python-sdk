@@ -1,0 +1,14 @@
+{
+    "debug": {
+        "status": 429
+    },
+    "result": null,
+    "error": {
+        "slug": "too_many_requests",
+        "description": "Too many requests",
+        "extra": {
+            "allowed_requests": 1,
+        "allowed_requests_interval": 60
+        }
+    }
+}
