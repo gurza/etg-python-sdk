@@ -9,7 +9,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 packages = ['ostrovok']
 
-requires = []
+requires = [
+    'requests>=2.21.0, <3',
+]
 test_requirements = [
     'pytest>=3',
 ]
