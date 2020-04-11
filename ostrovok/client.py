@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import datetime
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -11,9 +12,10 @@ API_PATH = '/api/b2b/v2'
 
 
 class OstrovokClient:
-    def __init__(self, auth,
-                 verify_ssl=True):
-        """Ostrovok API Client.
+    def __init__(self, auth, verify_ssl=True):
+        """Client for Ostrovok.ru Partners API v.2.
+
+        API Documentation: https://partner.ostrovok.ru/wiki
 
         :param auth: Ostrovok user (key_id) and password (key) for basic auth.
         :type auth: (str, str)
@@ -45,12 +47,11 @@ class OstrovokClient:
         r = requests.request(method, url,
                              params=None if data is None else {'data': json.dumps(data)},
                              auth=self.auth, verify=self.verify_ssl)
-        response = json.loads(r.content)
-        self.resp = response
+        self.resp = r.json()
 
         self.raise_for_error()
 
-        return response.get('result')
+        return self.resp.get('result')
 
     def raise_for_error(self):
         """Raises stored :class:`OstrovokException`, if one occurred."""
@@ -70,6 +71,36 @@ class OstrovokClient:
                 raise BadRequest(error_description, request=self.req, response=self.resp)
             else:
                 raise OstrovokException(error_description, request=self.req, response=self.resp)
+
+    def hotel_rates(self, ids, checkin, checkout):
+        """Searches hotels with available accommodation that meets the given search conditions.
+
+        It is not recommended to let the users choose the rates from this method.
+
+        :param ids: list of hotels identifiers or region identifier.
+        :type ids: list[str] or int
+        :param checkin: check-in date, no later than 366 days from today.
+        :type checkin: datetime.date
+        :param checkout: check-out date, no later than 30 days from check-in date.
+        :type checkout: datetime.date
+        :return: list of available hotels.
+        :rtype: list
+        """
+        data = dict()
+        if isinstance(ids, list):
+            data['ids'] = ids
+        elif isinstance(ids, int):
+            data['region_id'] = ids
+        data['checkin'] = checkin.strftime('%Y-%m-%d')
+        data['checkout'] = checkout.strftime('%Y-%m-%d')
+
+        response = self.request('GET', '/hotel/rates', data=data)
+
+        hotels = list()
+        if isinstance(response, dict):
+            hotels = response.get('hotels')
+
+        return hotels
 
     def region_list(self, last_id=None, limit=None, types=None):
         """Returns information about regions.
