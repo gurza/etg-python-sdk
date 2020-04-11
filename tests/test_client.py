@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import datetime
 
 import pytest
 
@@ -31,7 +32,29 @@ class TestBasic:
             client.raise_for_error()
 
 
-class TestInfoResources:
+class TestResources:
+    @pytest.mark.parametrize(
+        'ids, cnt', (
+            (['000'], 0),  # fare hotel
+            (['test_hotel'], 1),  # test hotel
+            (['000', 'test_hotel'], 1),
+            (6308866, 1),  # region with test hotel id (Белогорск, Амурская область)
+        ))
+    def test_hotel_rate(self, ids, cnt):
+        checkin = datetime.date.today() + datetime.timedelta(days=60)
+        checkout = checkin + datetime.timedelta(days=5)
+        availability_response = client.hotel_rates(ids, checkin, checkout)
+
+        # check ``checkin`` and ``checkout`` parameters
+        debug_returns = isinstance(client.resp, dict) and isinstance(client.resp.get('debug'), dict)
+        assert debug_returns
+        if debug_returns:
+            assert client.resp.get('debug').get('checkin') == checkin.strftime('%Y-%m-%d')
+            assert client.resp.get('debug').get('checkout') == checkout.strftime('%Y-%m-%d')
+
+        # check result
+        assert len(availability_response) == cnt
+
     def test_region_list(self):
         regions = client.region_list()
         last_id = regions[-1].get('id')
