@@ -5,8 +5,9 @@ from .__version__ import (
 )
 
 from .client import OstrovokClient
+from .models import Response
 from .exceptions import (
-    OstrovokException, BadRequest, AuthError,
+    OstrovokException, BadRequestException, AuthErrorException,
 )
 
 # Set default logging handler to avoid "No handler found" warnings.

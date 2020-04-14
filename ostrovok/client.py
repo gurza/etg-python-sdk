@@ -5,7 +5,7 @@ import datetime
 import requests
 from requests.auth import HTTPBasicAuth
 
-from .exceptions import OstrovokException, BadRequest, AuthError
+from .models import Response
 
 HOST = 'https://partner.ostrovok.ru'
 API_PATH = '/api/b2b/v2'
@@ -47,30 +47,11 @@ class OstrovokClient:
         r = requests.request(method, url,
                              params=None if data is None else {'data': json.dumps(data)},
                              auth=self.auth, verify=self.verify_ssl)
-        self.resp = r.json()
+        self.resp = Response(**r.json())
 
-        self.raise_for_error()
+        self.resp.raise_for_error()
 
-        return self.resp.get('result')
-
-    def raise_for_error(self):
-        """Raises stored :class:`OstrovokException`, if one occurred."""
-        error = self.resp.get('error', None)
-
-        if error is not None:
-            error_code = error.get('slug', None)
-            error_description = error.get('description', '')
-            error_extra = ''
-            if error.get('extra') is not None and error.get('extra').get('errors') is not None:
-                error_extra = '. '.join([msg for msg in error.get('extra').get('errors')])
-            error_description = '. '.join([error_description, error_extra])
-
-            if error_code == 'auth_failed':
-                raise AuthError(error_description, request=self.req, response=self.resp)
-            elif error_code == 'validation_invalid_params':
-                raise BadRequest(error_description, request=self.req, response=self.resp)
-            else:
-                raise OstrovokException(error_description, request=self.req, response=self.resp)
+        return self.resp.result
 
     def hotel_rates(self, ids, checkin, checkout):
         """Searches hotels with available accommodation that meets the given search conditions.
