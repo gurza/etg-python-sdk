@@ -5,11 +5,6 @@ import datetime
 import pytest
 
 from ostrovok import OstrovokClient
-from ostrovok.exceptions import (
-    OstrovokException, BadRequest, AuthError
-)
-
-from .utils import load_response
 
 auth = (os.getenv('OSTROVOK_KEY_ID'), os.getenv('OSTROVOK_KEY'))
 client = OstrovokClient(auth)
@@ -18,18 +13,6 @@ client = OstrovokClient(auth)
 class TestBasic:
     def test_client_create(self):
         assert client is not None
-
-    @pytest.mark.parametrize(
-        'exception, fn', (
-            (AuthError, 'auth_failed.json'),
-            (BadRequest, 'validation_invalid_params.json'),
-            (OstrovokException, 'too_many_requests.json'),
-            (OstrovokException, 'unexpected_error.json'),
-        ))
-    def test_errors(self, exception, fn):
-        with pytest.raises(exception):
-            client.resp = load_response(fn)
-            client.raise_for_error()
 
 
 class TestResources:
@@ -46,11 +29,11 @@ class TestResources:
         availability_response = client.hotel_rates(ids, checkin, checkout)
 
         # check ``checkin`` and ``checkout`` parameters
-        debug_returns = isinstance(client.resp, dict) and isinstance(client.resp.get('debug'), dict)
+        debug_returns = isinstance(client.resp.debug, dict)
         assert debug_returns
         if debug_returns:
-            assert client.resp.get('debug').get('checkin') == checkin.strftime('%Y-%m-%d')
-            assert client.resp.get('debug').get('checkout') == checkout.strftime('%Y-%m-%d')
+            assert client.resp.debug.get('checkin') == checkin.strftime('%Y-%m-%d')
+            assert client.resp.debug.get('checkout') == checkout.strftime('%Y-%m-%d')
 
         # check result
         assert len(availability_response) == cnt
