@@ -83,6 +83,43 @@ class OstrovokClient:
 
         return hotels
 
+    def hotelpage(self, hotel_id, checkin, checkout,
+                  adults=2, children=None, currency='default'):
+        """Returns actual rates for the given hotel.
+
+        This request is necessary to make a booking via API.
+        Value of `book_hash` in results of this API method can be passed as `book_hash` when sending booking requests.
+
+        :param hotel_id: hotel identifier.
+        :type hotel_id: str
+        :param checkin: check-in date, no later than 366 days from today.
+        :type checkin: datetime.date
+        :param checkout: check-out date, no later than 30 days from check-in date.
+        :type checkout: datetime.date
+        :param adults: number of adult guests, min number: 1, max number: 6.
+        :type adults: int
+        :param children: age of children who will stay in the room, max age - 17, max number - 4, e.g. [0,4,9].
+        :type children: list or None
+        :param currency: currency code of the rooms` rate in the response, e.g. 'USD', 'EUR', 'RUB' or 'default'.
+        :type currency: str
+        :return: hotel info with actual available rates.
+        :rtype: dict or None
+        """
+        data = {
+            'checkin': checkin.strftime('%Y-%m-%d'),
+            'checkout': checkout.strftime('%Y-%m-%d'),
+            'adults': adults,
+            'children': [] if children is None else children,
+            'currency': currency,
+        }
+        result = self.request('GET', '/hotelpage/'+hotel_id, data=data)
+
+        hotel = None
+        if isinstance(result, dict) and isinstance(result.get('hotels'), list) and len(result.get('hotels')):
+            hotel = result.get('hotels')[0]
+
+        return hotel
+
     def region_list(self, last_id=None, limit=None, types=None):
         """Returns information about regions.
 
