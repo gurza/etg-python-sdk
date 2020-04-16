@@ -38,6 +38,11 @@ class TestResources:
         # check result
         assert len(availability_response) == cnt
 
+    def test_hotelpage(self):
+        checkin = datetime.date.today() + datetime.timedelta(days=60)
+        checkout = checkin + datetime.timedelta(days=5)
+        assert client.hotelpage('test_hotel', checkin, checkout) is not None
+
     def test_region_list(self):
         regions = client.region_list()
         last_id = regions[-1].get('id')
