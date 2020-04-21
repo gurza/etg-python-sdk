@@ -4,10 +4,11 @@ from .__version__ import (
     __author__, __author_email__, __license__
 )
 
-from .client import OstrovokClient
+from .client import ETGClient
+from .hotels import ETGHotelsClient
 from .models import Response
 from .exceptions import (
-    OstrovokException, BadRequestException, AuthErrorException,
+    ETGException, BadRequestException, AuthErrorException,
 )
 
 # Set default logging handler to avoid "No handler found" warnings.

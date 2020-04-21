@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
 """
-ostrovok.exceptions
-~~~~~~~~~~~~~~~~~~~
+etg.exceptions
+~~~~~~~~~~~~~~
 
 This module contains the set of exceptions.
 """
 
 
-class OstrovokException(IOError):
+class ETGException(IOError):
     """There was an ambiguous exception that occurred while handling your request."""
 
 
-class BadRequestException(OstrovokException, ValueError):
+class BadRequestException(ETGException, ValueError):
     """Request GET or POST data does not validate."""
 
 
-class AuthErrorException(OstrovokException, ValueError):
+class AuthErrorException(ETGException, ValueError):
     """Authentication failed."""

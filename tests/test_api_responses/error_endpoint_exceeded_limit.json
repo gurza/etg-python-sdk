@@ -1,0 +1,21 @@
+{
+  "data": null,
+  "debug": {
+    "api_endpoint": {
+      "endpoint": "api/b2b/v3/hotel/info/",
+      "is_active": true,
+      "is_limited": true,
+      "remaining": -1,
+      "requests_number": 1,
+      "reset": "2018-08-16T12:32:40",
+      "seconds_number": 20
+    },
+    "api_key_id": 496,
+    "method": "GET",
+    "real_ip": "10.11.0.23",
+    "request_id": "8dd3efd24bdd6a9272770936e5108f8c",
+    "utcnow": "2018-08-16T12:32:26.161565"
+  },
+  "error": "endpoint_exceeded_limit",
+  "status": "error"
+}

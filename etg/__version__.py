@@ -1,5 +1,5 @@
-__title__ = 'ostrovok'
-__description__ = 'Client for Ostrovok API'
+__title__ = 'etg'
+__description__ = 'ETG API v3 Python SDK'
 __url__ = ''
 __version__ = '0.2.5'
 __author__ = 'Sergey Popinevskiy'

@@ -1,0 +1,22 @@
+{
+  "data": null,
+  "debug": {
+    "api_endpoint": {
+      "endpoint": "api/b2b/v3/hotel/order/info/",
+      "is_active": true,
+      "is_limited": true,
+      "remaining": 9,
+      "requests_number": 10,
+      "reset": "2018-08-23T09:59:38",
+      "seconds_number": 1
+    },
+    "api_key_id": 1304,
+    "method": "POST",
+    "real_ip": "52.29.104.100",
+    "request_id": "7f4937bdabe8bb13d4980dcd77a16117",
+    "utcnow": "2018-08-23T09:59:37.495757",
+    "validation_error": "value \"page_number\" is required but None"
+  },
+  "error": "invalid_params",
+  "status": "error"
+}

@@ -1,0 +1,21 @@
+{
+  "data": null,
+  "debug": {
+    "api_endpoint": {
+      "endpoint": "api/b2b/v3/hotel/info/",
+      "is_active": true,
+      "is_limited": true,
+      "remaining": 9,
+      "requests_number": 10,
+      "reset": "2018-08-16T12:12:37",
+      "seconds_number": 1
+    },
+    "api_key_id": 1304,
+    "method": "GET",
+    "real_ip": "62.76.100.3",
+    "request_id": "68c1141361db8c82835ea268486d7c6f",
+    "utcnow": "2018-08-16T12:12:36.328390"
+  },
+  "error": "decoding_json",
+  "status": "error"
+}

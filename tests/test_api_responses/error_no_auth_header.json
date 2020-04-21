@@ -1,0 +1,10 @@
+{
+  "data": null,
+  "debug": {
+    "real_ip": "52.29.104.100",
+    "request_id": "563c919d77000963a4ef9ade0988b21b",
+    "utcnow": "2018-08-23T10:03:28.794712"
+  },
+  "error": "no_auth_header",
+  "status": "error"
+}

@@ -1,65 +1,31 @@
 # -*- coding: utf-8 -*-
 import os
-import datetime
 
 import pytest
 
-from ostrovok import OstrovokClient
+from etg import ETGClient
+from etg import ETGException
 
-auth = (os.getenv('OSTROVOK_KEY_ID'), os.getenv('OSTROVOK_KEY'))
-client = OstrovokClient(auth)
+auth = (os.getenv('ETG_KEY_ID'), os.getenv('ETG_KEY'))
+client = ETGClient(auth)
 
 
 class TestBasic:
     def test_client_create(self):
         assert client is not None
 
+    def test_api_access(self):
+        try:
+            client.financial_info()
+        except ETGException as ex:
+            pytest.fail('API error: {0}'.format(ex))
+
 
 class TestResources:
-    @pytest.mark.parametrize(
-        'ids, cnt', (
-            (['000'], 0),  # fare hotel
-            (['test_hotel'], 1),  # test hotel
-            (['000', 'test_hotel'], 1),
-            (6308866, 1),  # region with test hotel id (Белогорск, Амурская область)
-        ))
-    def test_hotel_rate(self, ids, cnt):
-        checkin = datetime.date.today() + datetime.timedelta(days=60)
-        checkout = checkin + datetime.timedelta(days=5)
-        availability_response = client.hotel_rates(ids, checkin, checkout)
+    def test_contract_data_info(self):
+        contracts = client.contract_data_info().get('contract_datas', [])
+        assert len(contracts) > 0
 
-        # check ``checkin`` and ``checkout`` parameters
-        debug_returns = isinstance(client.resp.debug, dict)
-        assert debug_returns
-        if debug_returns:
-            assert client.resp.debug.get('checkin') == checkin.strftime('%Y-%m-%d')
-            assert client.resp.debug.get('checkout') == checkout.strftime('%Y-%m-%d')
-
-        # check result
-        assert len(availability_response) == cnt
-
-    def test_hotelpage(self):
-        checkin = datetime.date.today() + datetime.timedelta(days=60)
-        checkout = checkin + datetime.timedelta(days=5)
-        assert client.hotelpage('test_hotel', checkin, checkout) is not None
-
-    def test_region_list(self):
-        regions = client.region_list()
-        last_id = regions[-1].get('id')
-        regions_count = len(regions)
-        assert regions_count > 0
-
-        # check ``last_id`` parameter
-        regions_filtered_by_last_id = client.region_list(last_id=last_id)
-        assert len(regions_filtered_by_last_id) > 0
-        assert all(map(lambda region: region.get('id') > last_id, regions_filtered_by_last_id))
-
-        # check ``limit`` parameter
-        limit = regions_count // 2
-        assert len(client.region_list(limit=limit)) == limit
-
-        # check ``types`` parameter
-        types = ['Country', 'Province (State)']
-        regions_filtered_by_types = client.region_list(types=types)
-        assert any(map(lambda region: region.get('type') == types[0], regions_filtered_by_types))
-        assert any(map(lambda region: region.get('type') == types[1], regions_filtered_by_types))
+    def test_financial_info(self):
+        contracts = client.financial_info().get('contract_datas', [])
+        assert len(contracts)
