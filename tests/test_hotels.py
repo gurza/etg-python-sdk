@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import datetime
+import time
 import uuid
 
 import pytest
 
 from etg import ETGHotelsClient
+from etg import ETGException
 
 auth = (os.getenv('ETG_KEY_ID'), os.getenv('ETG_KEY'))
 partner_email = os.getenv('ETG_MAIL')
@@ -98,6 +100,13 @@ class TestResources:
         assert any(map(lambda region: region.get('type') == types[1], regions_filtered_by_types))
 
 
+class OrderValuesStorage:
+    partner_order_id = None
+    book_hash = None
+    payment_amount = None
+
+
+@pytest.mark.incremental
 class TestMainFlow:
     partner_order_id = str(uuid.uuid4())
     language = 'RU'
@@ -125,8 +134,7 @@ class TestMainFlow:
         },
     ]
 
-    def test_main_flow(self):
-        # get actual rates
+    def test_hotelpage(self):
         hotel = client.hotelpage(self.hotel_id, self.checkin, self.checkout, self.guests,
                                  currency=self.currency, language=self.language)
         acceptable_rates = list(
@@ -134,9 +142,10 @@ class TestMainFlow:
                    hotel.get('rates'))
         )
         assert len(acceptable_rates) > 0
-        book_hash = acceptable_rates[0].get('book_hash')
+        OrderValuesStorage.book_hash = acceptable_rates[0].get('book_hash')
 
-        # make reservation
+    def test_make_reservation(self):
+        book_hash = OrderValuesStorage.book_hash
         fake_user_ip = '8.8.8.8'
         reservation = client.make_reservation(self.partner_order_id, book_hash, self.language, fake_user_ip)
         assert reservation is not None
@@ -145,15 +154,15 @@ class TestMainFlow:
                    reservation.get('payment_types', []))
         )
         assert len(acceptable_payment_types) > 0
-        payment_amount = acceptable_payment_types[0].get('amount')
+        OrderValuesStorage.payment_amount = acceptable_payment_types[0].get('amount')
 
-        # complete reservation
+    def test_finish_reservation(self):
         partner = {
             'partner_order_id': self.partner_order_id,
         }
         payment_type = {
             'type': self.payment_type,
-            'amount': payment_amount,
+            'amount': OrderValuesStorage.payment_amount,
             'currency_code': self.currency,
         }
         rooms = self.rooms
@@ -164,4 +173,17 @@ class TestMainFlow:
         language = self.language
         is_completed = client.finish_reservation(partner, payment_type, rooms, user, language)
         assert is_completed
+        OrderValuesStorage.partner_order_id = self.partner_order_id
         print('partner_order_id:', self.partner_order_id)
+
+    def test_cancel(self):
+        is_canceled = False
+        for i in range(5):
+            time.sleep(5)
+            try:
+                is_canceled = client.cancel(self.partner_order_id)
+            except ETGException:
+                continue
+            break
+
+        assert is_canceled

@@ -208,7 +208,7 @@ class ETGHotelsClient(ETGClient):
         :param return_path: (optional) URL on the partner side to which the user will be forwarded
             by the payment gateway after 3D Secure verification.
         :type return_path: str
-        :return: True if the reservation completed.
+        :return: True if the reservation is completed.
         :rtype: bool
         """
         endpoint = 'api/b2b/v3/hotel/order/booking/finish/'
@@ -221,6 +221,21 @@ class ETGHotelsClient(ETGClient):
             'arrival_datetime': arrival_datetime,
             'upsell_data': upsell_data if upsell_data is not None else [],
             'return_path': return_path,
+        }
+        self.request('POST', endpoint, data=data)
+        return True
+
+    def cancel(self, partner_order_id):
+        """Cancels reservation.
+
+        :param partner_order_id: partner order id, e.g. '0a0f4e6d-b337-43be-a5f8-484492ebe033'.
+        :type partner_order_id: str
+        :return: True if the reservation is canceled.
+        :rtype: bool
+        """
+        endpoint = 'api/b2b/v3/hotel/order/cancel/'
+        data = {
+            'partner_order_id': partner_order_id,
         }
         self.request('POST', endpoint, data=data)
         return True
