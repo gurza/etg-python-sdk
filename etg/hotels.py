@@ -38,11 +38,11 @@ class ETGHotelsClient(ETGClient):
         :return: list of available hotels.
         :rtype: list
         """
-        api_endpoint = ''
+        endpoint = None
         if isinstance(ids, list):
-            api_endpoint = 'api/b2b/v3/search/serp/hotels/'
+            endpoint = 'api/b2b/v3/search/serp/hotels/'
         elif isinstance(ids, int):
-            api_endpoint = 'api/b2b/v3/search/serp/region/'
+            endpoint = 'api/b2b/v3/search/serp/region/'
         data = {
             'ids': ids,
             'region_id': ids,
@@ -55,7 +55,7 @@ class ETGHotelsClient(ETGClient):
             'upsells': upsells if upsells is not None else {},
             'language': language,
         }
-        response = self.request('POST', api_endpoint, data=data)
+        response = self.request('POST', endpoint, data=data)
 
         hotels = list()
         if isinstance(response, dict):
@@ -132,7 +132,7 @@ class ETGHotelsClient(ETGClient):
         :return: hotel info with actual available rates.
         :rtype: dict or None
         """
-        api_endpoint = 'api/b2b/v3/search/hp/'
+        endpoint = 'api/b2b/v3/search/hp/'
         data = {
             'id': hotel_id,
             'checkin': checkin.strftime('%Y-%m-%d'),
@@ -143,13 +143,87 @@ class ETGHotelsClient(ETGClient):
             'upsells': upsells if upsells is not None else {},
             'language': language,
         }
-        response = self.request('POST', api_endpoint, data=data)
+        response = self.request('POST', endpoint, data=data)
 
         hotel = None
         if isinstance(response, dict) and isinstance(response.get('hotels'), list) and len(response.get('hotels')):
             hotel = response.get('hotels')[0]
 
         return hotel
+
+    def make_reservation(self, partner_order_id, book_hash, language, user_ip):
+        """Makes a new reservation.
+
+        :param partner_order_id: unique order id on partner side, e.g. '0a0f4e6d-b337-43be-a5f8-484492ebe033'.
+        :type partner_order_id: str
+        :param book_hash: unique identifier of the rate from hotelpage response.
+        :type book_hash: str
+        :param language: language of the reservation, e.g. 'en'.
+        :type language: str
+        :param user_ip: customer IP address, e.g. '8.8.8.8'.
+        :type user_ip: str
+        :return: reservation info.
+        :rtype: dict
+        """
+        endpoint = 'api/b2b/v3/hotel/order/booking/form/'
+        data = {
+            'partner_order_id': partner_order_id,
+            'book_hash': book_hash,
+            'language': language,
+            'user_ip': user_ip,
+        }
+        response = self.request('POST', endpoint, data=data)
+
+        return response
+
+    def finish_reservation(self, partner, payment_type, rooms, user, language,
+                           arrival_datetime=None, upsell_data=None, return_path=None):
+        """Completes the reservation.
+
+        :param partner: partner information.
+            partner_order_id: partner order id.
+            comment: (optional) partner booking inner comment. It is visible only to the partner himself.
+            amount_sell_b2b2c: (optional) reselling price for the client in contract currency.
+        :type partner: dict
+        :param payment_type: payment information.
+            type: payment type option, possible values: 'now', 'hotel', 'deposit'.
+            amount: amount of the order.
+            currency_code: ISO currency code, e.g. 'EUR'.
+            init_uuid: (optional) token of the booking payment operation.
+            pay_uuid: (optional) token of the booking payment check.
+        :type payment_type: dict
+        :param rooms: guest data by the rooms.
+        :type rooms: list
+        :param user: guest additional information.
+            email: partner manager email.
+            phone: guest telephone number.
+            comment: (optional) guest comment sent to the hotel.
+        :type user: dict
+        :param language: language of the reservation, e.g. 'en'.
+        :type language: str
+        :param arrival_datetime: (optional) estimated arrival time to the hotel.
+        :type arrival_datetime: datetime.datetime
+        :param upsell_data: (optional) upsell information.
+        :type upsell_data: list or None
+        :param return_path: (optional) URL on the partner side to which the user will be forwarded
+            by the payment gateway after 3D Secure verification.
+        :type return_path: str
+        :return: True if the reservation completed.
+        :rtype: bool
+        """
+        endpoint = 'api/b2b/v3/hotel/order/booking/finish/'
+        data = {
+            'partner': partner,
+            'payment_type': payment_type,
+            'rooms': rooms,
+            'user': user,
+            'language': language,
+            'arrival_datetime': arrival_datetime,
+            'upsell_data': upsell_data if upsell_data is not None else [],
+            'return_path': return_path,
+        }
+        self.request('POST', endpoint, data=data)
+        return True
 
     def region_list(self, last_id=None, limit=None, types=None):
         """Returns information about regions.
