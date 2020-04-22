@@ -11,7 +11,7 @@ client = ETGHotelsClient(auth)
 
 
 class TestResources:
-    ids = ['test_hotel']
+    hotel_id = 'test_hotel'
     region_id = 6308866  # region with test hotel id (Белогорск, Амурская область)
     checkin = datetime.date.today() + datetime.timedelta(days=60)
     checkout = checkin + datetime.timedelta(days=5)
@@ -19,6 +19,7 @@ class TestResources:
         'adults': 2,
         'children': [],
     }]
+    book_hash = None
 
     @pytest.mark.parametrize(
         'adults, children', (
@@ -26,6 +27,7 @@ class TestResources:
             (2, [6]),
         ))
     def test_search(self, adults, children):
+        ids = [self.hotel_id]
         guests = [{
             'adults': adults,
             'children': children,
@@ -33,7 +35,7 @@ class TestResources:
         currency = 'EUR'
         residency = 'gb'
         language = 'en'
-        available_hotels = client.search(self.ids, self.checkin, self.checkout, guests,
+        available_hotels = client.search(ids, self.checkin, self.checkout, guests,
                                          currency=currency, residency=residency, language=language)
 
         debug_request = dict()
@@ -44,7 +46,7 @@ class TestResources:
         assert len(available_hotels[0].get('rates')) > 0
 
         # check search conditions
-        assert debug_request.get('ids') == self.ids
+        assert debug_request.get('ids') == ids
 
         assert debug_request.get('checkin') == self.checkin.strftime('%Y-%m-%d')
         assert debug_request.get('checkout') == self.checkout.strftime('%Y-%m-%d')
@@ -65,7 +67,8 @@ class TestResources:
         assert debug_request.get('language') == language
 
     def test_search_by_hotels(self):
-        available_hotels = client.search_by_hotels(self.ids, self.checkin, self.checkout, self.guests)
+        ids = [self.hotel_id]
+        available_hotels = client.search_by_hotels(ids, self.checkin, self.checkout, self.guests)
         assert len(available_hotels[0].get('rates')) > 0
 
     def test_search_by_region(self):
@@ -73,9 +76,10 @@ class TestResources:
         assert len(available_hotels[0].get('rates')) > 0
 
     def test_hotelpage(self):
-        checkin = datetime.date.today() + datetime.timedelta(days=60)
-        checkout = checkin + datetime.timedelta(days=5)
-        assert client.hotelpage('test_hotel', checkin, checkout) is not None
+        hotel = client.hotelpage(self.hotel_id, self.checkin, self.checkout, self.guests)
+        assert hotel is not None
+        self.book_hash = hotel.get('rates')[0].get('book_hash')
+        assert self.book_hash is not None
 
     def test_region_list(self):
         regions = client.region_list()
