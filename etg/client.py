@@ -66,7 +66,8 @@ class ETGClient:
         :return: info for all own contracts.
         :rtype: dict
         """
-        response_data = self.request('GET', 'api/b2b/v3/general/contract/data/info/')
+        endpoint = 'api/b2b/v3/general/contract/data/info/'
+        response_data = self.request('GET', endpoint)
         return response_data
 
     def financial_info(self):
@@ -75,5 +76,6 @@ class ETGClient:
         :return: financial info for all own contracts.
         :rtype: dict
         """
-        response_data = self.request('GET', 'api/b2b/v3/general/financial/info/')
+        endpoint = 'api/b2b/v3/general/financial/info/'
+        response_data = self.request('GET', endpoint)
         return response_data

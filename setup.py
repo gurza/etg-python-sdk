@@ -13,7 +13,7 @@ requires = [
     'requests>=2.21.0, <3',
 ]
 test_requirements = [
-    'pytest>=3',
+    'pytest>=5.4',
 ]
 
 about = {}
