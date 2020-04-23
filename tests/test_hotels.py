@@ -24,6 +24,12 @@ class TestResources:
         'children': [],
     }]
 
+    def test_autocomplete(self):
+        language = 'en'
+        response = client.autocomplete('Berlin', language=language)
+        assert len(response.get('hotels', [])) > 0
+        assert len(response.get('regions', [])) > 0
+
     @pytest.mark.parametrize(
         'adults, children', (
             (2, []),

@@ -13,6 +13,10 @@ class ETGClient:
     Client for ETG API v3 (general API resources).
     """
     API_HOST = 'https://api.worldota.net'
+    SUPPORTED_LANGUAGES = (
+        'bg', 'de', 'el', 'en', 'es', 'fr', 'it',
+        'hu', 'pl', 'pt', 'ro', 'ru', 'sr', 'tr',
+    )
 
     def __init__(self, auth, verify_ssl=True):
         """Init.

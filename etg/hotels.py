@@ -5,6 +5,25 @@ from .client import ETGClient
 
 
 class ETGHotelsClient(ETGClient):
+    def autocomplete(self, query,
+                     language=None):
+        """Finds regions and hotels by a part of their names.
+
+        :param query: part of hotel or region name.
+        :type query: str
+        :param language: (optional) language of the response, e.g. 'en', 'ru'.
+        :type language: str
+        :return: suggested hotels and regions, no more than 5 objects for each category.
+        :rtype: dict
+        """
+        endpoint = 'api/b2b/v3/search/multicomplete/'
+        data = {
+            'query': query,
+            'language': language,
+        }
+        response = self.request('POST', endpoint, data=data)
+        return response
+
     def search(self, ids, checkin, checkout, guests,
                currency=None, residency=None, timeout=None, upsells=None,
                language=None):
@@ -158,7 +177,7 @@ class ETGHotelsClient(ETGClient):
         :type partner_order_id: str
         :param book_hash: unique identifier of the rate from hotelpage response.
         :type book_hash: str
-        :param language: language of the reservation, e.g. 'en'.
+        :param language: language of the reservation, e.g. 'en', 'ru'.
         :type language: str
         :param user_ip: customer IP address, e.g. '8.8.8.8'.
         :type user_ip: str
@@ -199,7 +218,7 @@ class ETGHotelsClient(ETGClient):
             phone: guest telephone number.
             comment: (optional) guest comment sent to the hotel.
         :type user: dict
-        :param language: language of the reservation, e.g. 'en'.
+        :param language: language of the reservation, e.g. 'en', 'ru'.
         :type language: str
         :param arrival_datetime: (optional) estimated arrival time to the hotel.
         :type arrival_datetime: datetime.datetime
