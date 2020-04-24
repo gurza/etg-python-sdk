@@ -4,7 +4,10 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
-from .models import Response
+from .models.client import Response
+from .models.hotels import (
+    GuestData,
+)
 
 
 class ETGClient:
@@ -13,6 +16,10 @@ class ETGClient:
     Client for ETG API v3 (general API resources).
     """
     API_HOST = 'https://api.worldota.net'
+    SUPPORTED_LANGUAGES = (
+        'bg', 'de', 'el', 'en', 'es', 'fr', 'it',
+        'hu', 'pl', 'pt', 'ro', 'ru', 'sr', 'tr',
+    )
 
     def __init__(self, auth, verify_ssl=True):
         """Init.
@@ -47,9 +54,9 @@ class ETGClient:
         r_params = r_data = None
         if data is not None:
             if method == 'GET':
-                r_params = {'data': json.dumps(data)}
+                r_params = {'data': json.dumps(data, cls=MultiJSONEncoder)}
             elif method == 'POST':
-                r_data = json.dumps(data)
+                r_data = json.dumps(data, cls=MultiJSONEncoder)
 
         url = '{api_host}/{endpoint}'.format(api_host=self.API_HOST, endpoint=endpoint)
         r = requests.request(method, url,
@@ -79,3 +86,11 @@ class ETGClient:
         endpoint = 'api/b2b/v3/general/financial/info/'
         response_data = self.request('GET', endpoint)
         return response_data
+
+
+class MultiJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, GuestData):
+            return o.to_json()
+        # Let the base class default raise the TypeError
+        return json.JSONEncoder.default(self, o)

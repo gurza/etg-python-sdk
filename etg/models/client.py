@@ -6,7 +6,7 @@ etg.models
 This module contains the primary objects.
 """
 
-from .exceptions import (
+from etg.exceptions import (
     ETGException, AuthErrorException, BadRequestException
 )
 

@@ -9,7 +9,7 @@ from etg.exceptions import (
 from .utils import load_response
 
 
-class TestResponse:
+class TestClientResponse:
     @pytest.mark.parametrize(
         'exception, fn', (
             (AuthErrorException, 'error_incorrect_credentials.json'),
