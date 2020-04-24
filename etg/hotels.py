@@ -94,8 +94,9 @@ class ETGHotelsClient(ETGClient):
         :type checkin: datetime.date
         :param checkout: check-out date, no later than 30 days from check-in date.
         :type checkout: datetime.date
-        :param guests: list of guests in the rooms, e.g. [{'adults': 2, 'children': []}].
+        :param guests: list of guests in the rooms.
             The max number of rooms in one request is 6.
+        :type guests: list[GuestData]
         :param kwargs: optional parameters.
             For more information, see the description of ``self.search`` method.
         :return: list of available hotels (Hotels Search Engine Results Page).
@@ -112,8 +113,9 @@ class ETGHotelsClient(ETGClient):
         :type checkin: datetime.date
         :param checkout: check-out date, no later than 30 days from check-in date.
         :type checkout: datetime.date
-        :param guests: list of guests in the rooms, e.g. [{'adults': 2, 'children': []}].
+        :param guests: list of guests in the rooms.
             The max number of rooms in one request is 6.
+        :type guests: list[GuestData]
         :param kwargs: optional parameters.
             For more information, see the description of ``self.search`` method.
         :return: list of available hotels (Region Search Engine Results Page).
