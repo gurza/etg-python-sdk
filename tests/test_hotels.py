@@ -8,6 +8,7 @@ import pytest
 
 from etg import ETGHotelsClient
 from etg import ETGException
+from etg.hotels import GuestData
 
 auth = (os.getenv('ETG_KEY_ID'), os.getenv('ETG_KEY'))
 partner_email = os.getenv('ETG_MAIL')
@@ -19,10 +20,7 @@ class TestResources:
     region_id = 6308866  # region with test hotel id (Белогорск, Амурская область)
     checkin = datetime.date.today() + datetime.timedelta(days=60)
     checkout = checkin + datetime.timedelta(days=5)
-    guests = [{
-        'adults': 2,
-        'children': [],
-    }]
+    guests = [GuestData(2)]
 
     def test_autocomplete(self):
         language = 'en'
@@ -33,14 +31,11 @@ class TestResources:
     @pytest.mark.parametrize(
         'adults, children', (
             (2, []),
-            (2, [6]),
+            (2, [1]),
         ))
     def test_search(self, adults, children):
         ids = [self.hotel_id]
-        guests = [{
-            'adults': adults,
-            'children': children,
-        }]
+        guests = [GuestData(adults, children)]
         currency = 'EUR'
         residency = 'gb'
         language = 'en'
@@ -63,8 +58,8 @@ class TestResources:
                        available_hotels[0].get('rates')))
 
         assert len(debug_request.get('guests')) == len(guests)
-        assert debug_request.get('guests')[0].get('adults') == guests[0].get('adults')
-        assert debug_request.get('guests')[0].get('children') == guests[0].get('children')
+        assert debug_request.get('guests')[0].get('adults') == adults
+        assert debug_request.get('guests')[0].get('children') == children
 
         assert debug_request.get('currency') == currency
         assert all(map(
