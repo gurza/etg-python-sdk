@@ -2,6 +2,9 @@
 import datetime
 
 from .client import ETGClient
+from .models.hotels import (
+    GuestData,
+)
 
 
 class ETGHotelsClient(ETGClient):
@@ -286,19 +289,3 @@ class ETGHotelsClient(ETGClient):
         regions = self.request('GET', '/region/list', data=data)
 
         return regions
-
-
-class GuestData(dict):
-    def __init__(self, adults, children=None):
-        """Init.
-
-        :param adults: number of adult guests.
-        :type adults: int
-        :param children: (optional) age of children who will stay in the room.
-        :type children: list[int] or None
-        """
-        dict.__init__(
-            self,
-            adults=adults,
-            children=children if children is not None else []
-        )

@@ -7,8 +7,10 @@ import uuid
 import pytest
 
 from etg import ETGHotelsClient
+from etg import (  # models
+    GuestData,
+)
 from etg import ETGException
-from etg.hotels import GuestData
 
 auth = (os.getenv('ETG_KEY_ID'), os.getenv('ETG_KEY'))
 partner_email = os.getenv('ETG_MAIL')
