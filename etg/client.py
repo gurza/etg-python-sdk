@@ -5,9 +5,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from .models.client import Response
-from .models.hotels import (
-    GuestData,
-)
 
 
 class ETGClient:
@@ -90,7 +87,7 @@ class ETGClient:
 
 class MultiJSONEncoder(json.JSONEncoder):
     def default(self, o):
-        if isinstance(o, GuestData):
+        if hasattr(o, 'to_json') and callable(o.to_json):
             return o.to_json()
         # Let the base class default raise the TypeError
         return json.JSONEncoder.default(self, o)
