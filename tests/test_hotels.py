@@ -118,10 +118,7 @@ class TestMainFlow:
     hotel_id = 'test_hotel'
     checkin = datetime.date.today() + datetime.timedelta(days=60)
     checkout = checkin + datetime.timedelta(days=5)
-    guests = [{
-        'adults': 2,
-        'children': [],
-    }]
+    guests = [GuestData(2)]
     rooms = [
         {
             'guests': [
