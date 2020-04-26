@@ -136,9 +136,9 @@ class ETGHotelsClient(ETGClient):
         :type checkin: datetime.date
         :param checkout: check-out date, no later than 30 days from check-in date.
         :type checkout: datetime.date
-        :param guests: list of guests in the rooms, e.g. [{'adults': 2, 'children': []}].
+        :param guests: list of guests in the rooms.
             The max number of rooms in one request is 6.
-        :type guests: list
+        :type guests: list[GuestData]
         :param currency: (optional) currency code of the rooms rate in the response, e.g. 'GBP', 'USD', 'RUB'.
             Default value is contract currency.
         :type currency: str or None
