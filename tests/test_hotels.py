@@ -112,7 +112,7 @@ class OrderValuesStorage:
 @pytest.mark.incremental
 class TestMainFlow:
     partner_order_id = str(uuid.uuid4())
-    language = 'RU'
+    language = 'ru'
     currency = 'RUB'
     payment_type = 'deposit'
     hotel_id = 'test_hotel'
