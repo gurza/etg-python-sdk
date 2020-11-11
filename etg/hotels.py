@@ -298,6 +298,6 @@ class ETGHotelsClient(ETGClient):
             'language': language,
         }
 
-        voucher = self.request('GET', 'hotel/order/document/voucher/download/', data=data, stream=True)
+        voucher = self.request('GET', 'api/b2b/v3/hotel/order/document/voucher/download/', data=data, stream=True)
 
         return voucher
