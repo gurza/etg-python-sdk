@@ -4,7 +4,7 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
-from .models.client import Response
+from .models import Response
 
 
 class ETGClient:
@@ -12,7 +12,7 @@ class ETGClient:
     """
     Client for ETG API v3 (general API resources).
     """
-    API_HOST = 'https://api.worldota.net'
+    API_HOST = 'https://api.worldota.net/api/b2b/v3'
     SUPPORTED_LANGUAGES = (
         'bg', 'de', 'el', 'en', 'es', 'fr', 'it',
         'hu', 'pl', 'pt', 'ro', 'ru', 'sr', 'tr',
@@ -32,7 +32,8 @@ class ETGClient:
         self.req = None
         self.resp = None
 
-    def request(self, method, endpoint, data=None):
+    def request(self, method, endpoint,
+                data=None, stream=False):
         """Constructs and sends a request to API Gateway.
 
         :param method: HTTP method, possible values: ``GET``, or ``POST``.
@@ -43,6 +44,8 @@ class ETGClient:
         :param data: (optional) dictionary of parameters to send in the query string as the value of ``data``,
             e.g. data={'limit': 2, 'last_id': 123}, query string will be ``resource?data={"limit": 2, "last_id": 123}``.
         :type data: dict or None
+        :param stream: Set True to download binary response.
+        :type stream: bool
         :return: main content of the response API (`$.data`).
         :rtype: object
         """
@@ -57,7 +60,13 @@ class ETGClient:
 
         url = '{api_host}/{endpoint}'.format(api_host=self.API_HOST, endpoint=endpoint)
         r = requests.request(method, url,
-                             params=r_params, data=r_data, auth=self.auth, verify=self.verify_ssl)
+                             params=r_params, data=r_data, auth=self.auth, verify=self.verify_ssl,
+                             stream=False)
+
+        if stream:
+            r.raise_for_status()
+            return r.content
+
         self.resp = Response(**r.json())
 
         self.resp.raise_for_error()

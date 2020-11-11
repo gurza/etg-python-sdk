@@ -6,9 +6,8 @@ from .__version__ import (
 
 from .client import ETGClient
 from .hotels import ETGHotelsClient
-from .models.client import Response
-from .models.hotels import (
-    GuestData,
+from .models import (
+    Response, GuestData,
 )
 from .exceptions import (
     ETGException, BadRequestException, AuthErrorException,

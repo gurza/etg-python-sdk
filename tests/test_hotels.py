@@ -176,6 +176,11 @@ class TestMainFlow:
         OrderValuesStorage.partner_order_id = self.partner_order_id
         print('partner_order_id:', self.partner_order_id)
 
+    def test_get_voucher(self):
+        language = self.language
+        voucher = client.get_voucher(OrderValuesStorage.partner_order_id, language)
+        assert voucher
+
     def test_cancel(self):
         is_canceled = False
         for i in range(5):

@@ -2,7 +2,7 @@
 import datetime
 
 from .client import ETGClient
-from .models.hotels import (
+from .models import (
     GuestData,
 )
 
@@ -288,6 +288,16 @@ class ETGHotelsClient(ETGClient):
         if types is not None:
             data['types'] = types
 
-        regions = self.request('GET', '/region/list', data=data)
+        regions = self.request('GET', 'region/list', data=data)
 
         return regions
+
+    def get_voucher(self, partner_order_id, language):
+        data = {
+            'partner_order_id': partner_order_id,
+            'language': language,
+        }
+
+        voucher = self.request('GET', 'hotel/order/document/voucher/download/', data=data, stream=True)
+
+        return voucher
