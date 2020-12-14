@@ -249,6 +249,13 @@ class ETGHotelsClient(ETGClient):
         self.request('POST', endpoint, data=data)
         return True
 
+    def check_reservation_status(self, partner_order_id):
+        endpoint = 'api/b2b/v3/hotel/order/booking/finish/status/'
+        data = {
+            'partner_order_id': partner_order_id,
+        }
+        response = self.request('POST', endpoint, data=data)
+
     def cancel(self, partner_order_id):
         """Cancels reservation.
 
