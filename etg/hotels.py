@@ -255,6 +255,7 @@ class ETGHotelsClient(ETGClient):
             'partner_order_id': partner_order_id,
         }
         response = self.request('POST', endpoint, data=data)
+        return response
 
     def cancel(self, partner_order_id):
         """Cancels reservation.
