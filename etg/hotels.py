@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-import time
 
 from .client import ETGClient
 from .models import (
