@@ -257,17 +257,17 @@ class ETGHotelsClient(ETGClient):
             'partner_order_id': partner_order_id,
         }
 
-        success = False
+        is_success = False
         for i in range(3):
             try:
                 self.request('POST', endpoint, data=data)
             except ProcessingStatusException:
                 time.sleep(5)
                 continue
-            success = True
+            is_success = True
             break
 
-        return success
+        return is_success
 
     def cancel(self, partner_order_id):
         """Cancels reservation.
