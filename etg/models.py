@@ -6,9 +6,7 @@ etg.models
 This module contains the primary objects.
 """
 
-from .exceptions import (
-    ETGException, AuthErrorException, BadRequestException
-)
+import exceptions
 
 
 class Response:
@@ -40,15 +38,18 @@ class Response:
         if self.ok:
             return
 
+        if self.status == 'processing':
+            raise exceptions.ProcessingStatusException
+
         if self.error in ('incorrect_credentials', 'no_auth_header', 'invalid_auth_header'):
-            raise AuthErrorException(self.error)
+            raise exceptions.AuthErrorException(self.error)
         elif self.error == 'invalid_params':
             error_msg = self.error
             if self.debug is not None and self.debug.get('validation_error') is not None:
                 error_msg = ": ".join([error_msg, self.debug.get('validation_error')])
-            raise BadRequestException(error_msg)
+            raise exceptions.BadRequestException(error_msg)
         else:
-            raise ETGException(self.error)
+            raise exceptions.ETGException(self.error)
 
     def __bool__(self):
         """Returns True if there is no error in the response."""

@@ -10,7 +10,7 @@ from .models import (
     Response, GuestData,
 )
 from .exceptions import (
-    ETGException, BadRequestException, AuthErrorException,
+    ETGException, BadRequestException, AuthErrorException, ProcessingStatusException,
 )
 
 # Set default logging handler to avoid "No handler found" warnings.

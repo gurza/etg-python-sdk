@@ -18,3 +18,7 @@ class BadRequestException(ETGException, ValueError):
 
 class AuthErrorException(ETGException, ValueError):
     """Authentication failed."""
+
+
+class ProcessingStatusException(ETGException, ValueError):
+    """Response with `processing` status."""
