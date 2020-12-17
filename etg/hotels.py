@@ -3,7 +3,6 @@ import datetime
 import time
 
 from .client import ETGClient
-from exceptions import ProcessingStatusException
 from .models import (
     GuestData,
 )
@@ -256,18 +255,8 @@ class ETGHotelsClient(ETGClient):
         data = {
             'partner_order_id': partner_order_id,
         }
-
-        is_success = False
-        for i in range(3):
-            try:
-                self.request('POST', endpoint, data=data)
-            except ProcessingStatusException:
-                time.sleep(5)
-                continue
-            is_success = True
-            break
-
-        return is_success
+        response = self.request('POST', endpoint, data=data)
+        return response
 
     def cancel(self, partner_order_id):
         """Cancels reservation.
